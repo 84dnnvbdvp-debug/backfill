@@ -143,6 +143,7 @@ class GmailReplyPoller:
             .execute()
         )
         thread_id = sent["threadId"]
+        sent_internal_date = int(sent.get("internalDate", "0"))
         deadline = time.monotonic() + self.timeout_seconds
         seen = {sent_message_id}
 
@@ -162,6 +163,8 @@ class GmailReplyPoller:
                 if mid in seen:
                     continue
                 seen.add(mid)
+                if int(message.get("internalDate", "0")) <= sent_internal_date:
+                    continue
                 headers = self._headers(message)
                 sender = parseaddr(headers.get("from", ""))[1].lower()
                 if sender != self.expected_sender:
