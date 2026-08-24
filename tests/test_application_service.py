@@ -20,7 +20,7 @@ class FakeCalendar:
     def verify_slot_open(self, slot_id):
         return self.open and slot_id == self.slot_id
 
-    def find_by_boking_key(self, booking_key):
+    def find_by_booking_key(self, booking_key):
         if not self.lookup_visible:
             return []
         booking = self.bookings.get(booking_key)
@@ -172,7 +172,7 @@ class BackfillApplicationTests(unittest.TestCase):
         msg.commit_then_raise_for.add("confirmation:C3")
         msg.visible = False
         app.process_response("offer-c3", "ACCEPT", "r-c3")
-        self.assertEqual(repo.workflow.state, WorkflowState.BOOKED_NOTIFICATION_PENDING
+        self.assertEqual(repo.workflow.state, WorkflowState.BOOKED_NOTIFICATION_PENDING)
         calls = msg.send_calls
         app.start()
         self.assertEqual(msg.send_calls, calls)
@@ -181,6 +181,7 @@ class BackfillApplicationTests(unittest.TestCase):
         app.start()
         self.assertEqual(repo.workflow.state, WorkflowState.COMPLETED_RECOVERED)
         self.assertEqual(msg.send_calls, calls)
+
     def test_offer_ambiguity_is_reconciliation_only_and_order_preserving(self):
         repo, cal, msg, app = self.runtime()
         msg.commit_then_raise_for.add("offer:C2")
@@ -196,4 +197,82 @@ class BackfillApplicationTests(unittest.TestCase):
         app.start()
         self.assertEqual(repo.workflow.state, WorkflowState.WAITING_FOR_REPLIES)
         self.assertEqual(msg.send_calls, calls)
-    def testk}É•ÍÁ½¹Í•}É•Á±…å}É•ÍÕµ•Í}‘•±¥¹”¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€…ÁÀ¹ÍÑ…ÉĞ ¤(€€€€€€€½™˜€ôÉ•Á¼¹½™™•ÉÍl‰½™™•ÈµŒÈ‰t(€€€€€€€½™˜¹ÍÑ…ÑÕÌ€ô=™™•ÉMÑ…ÑÕÌ¹1%9(€€€€€€€½™˜¹É•ÍÁ½¹Í•}¥€ô€‰ÈµŒÈˆ(€€€€€€€É•Á¼¹İ½É­™±½Ü¹…Ñ¥Ù•}½™™•É}¥€ô€‰½™™•ÈµŒÈˆ(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÈˆ°€‰1%9ˆ°€‰ÈµŒÈˆ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹İ½É­™±½Ü¹…Ñ¥Ù•}½™™•É}¥°€‰½™™•ÈµŒÌˆ¤((€€€‘•˜Ñ•ÍÑ}É•ÍÁ½¹Í•}É•Á±…å}µ¥Íµ…Ñ¡}™…¥±Í}±½Í•¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€…ÁÀ¹ÍÑ…ÉĞ ¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÈˆ°€‰1%9ˆ°€‰ÈµŒÈˆ¤(€€€€€€€İ¥Ñ Í•±˜¹…ÍÍ•ÉÑI…¥Í•Ì¡IÕ¹Ñ¥µ•ÉÉ½È¤è(€€€€€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÈˆ°€‰APˆ°€‰ÈµŒÈˆ¤(€€€‘•˜Ñ•ÍÑ}½İ¹•É}‘•¹¥…±}É•ÍÕµ•Í}¹•áÑ}…¹‘¥‘…Ñ”¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€…ÁÀ¹ÍÑ…ÉĞ ¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÈˆ°€‰APˆ°€‰ÈµŒÈˆ°‘¥Í½Õ¹ĞõQÉÕ”¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹İ½É­™±½Ü¹ÍÑ…Ñ”°]½É­™±½İMÑ…Ñ”¹9M}=]9I}%M%=8¤(€€€€€€€…ÁÀ¹…ÁÁ±å}½İ¹•É}‘•¥Í¥½¸¡…ÁÁÉ½Ù”õ…±Í”¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹İ½É­™±½Ü¹…Ñ¥Ù•}½™™•É}¥°€‰½™™•ÈµŒÌˆ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡…°¹É•…Ñ•}…±±Ì°€À¤((€€€‘•˜Ñ•ÍÑ}½İ¹•É}…ÁÁÉ½Ù…±}É•ÅÕ¥É•Í}•áÁ±¥¥Ñ}Ù…±Õ•}…¹‘}¥Í}É•Á±…å}Í…™”¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€…ÁÀ¹ÍÑ…ÉĞ ¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÈˆ°€‰APˆ°€‰ÈµŒÈˆ°‘¥Í½Õ¹ĞõQÉÕ”¤(€€€€€€€İ¥Ñ Í•±˜¹…ÍÍ•ÉÑI…¥Í•Ì¡Y…±Õ•ÉÉ½È¤è(€€€€€€€€€€€…ÁÀ¹…ÁÁ±å}½İ¹•É}‘•¥Í¥½¸¡…ÁÁÉ½Ù”õQÉÕ”¤(€€€€€€€…ÁÀ¹…ÁÁ±å}½İ¹•É}‘•¥Í¥½¸¡…ÁÁÉ½Ù”õQÉÕ”°…ÁÁÉ½Ù•‘}Ù…±Õ•}•¹ÑÌôÜÀÀÀ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹±•‘•Él‰İ˜´ÀÀÄ‰t°€ÜÀÀÀ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹İ½É­™±½Ü¹É•½Ù•É•‘}Ù…±Õ•}•¹ÑÌ°€ÜÀÀÀ¤(€€€€€€€‰•™½É”€ô½Áä¹‘••Á½Áä¡É•Á¼¤(€€€€€€€…ÁÀ¹…ÁÁ±å}½İ¹•É}‘•¥Í¥½¸¡…ÁÁÉ½Ù”õQÉÕ”°…ÁÁÉ½Ù•‘}Ù…±Õ•}•¹ÑÌôÜÀÀÀ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼°‰•™½É”¤((€€€‘•˜Ñ•ÍÑ}Ñ•Éµ¥¹…±}ÍÑ…Ñ•Í}…‰Í½É‰}É•ÍÁ½¹Í•}É•Á±…ä¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€Í•±˜¹•Ñ}Ñ½}ŒÌ¡…ÁÀ¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÌˆ°€‰APˆ°€‰ÈµŒÌˆ¤(€€€€€€€Í¹…ÁÍ¡½Ğ€ô½Áä¹‘••Á½Áä¡É•Á¼¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÌˆ°€‰APˆ°€‰ÈµŒÌˆ¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÈˆ°€‰1%9ˆ°€‰ÈµŒÈˆ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼°Í¹…ÁÍ¡½Ğ¤((€€€‘•˜Ñ•ÍÑ}½µÁ±•Ñ•‘}Õ¹É•½Ù•É•‘}…‰Í½É‰Í}É•Á±…ä¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€Í•±˜¹•Ñ}Ñ½}ŒÌ¡…ÁÀ¤(€€€€€€€…°¹½Á•¸€ô…±Í”(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÌˆ°€‰APˆ°€‰ÈµŒÌˆ¤(€€€€€€€Í¹…ÁÍ¡½Ğ€ô½Áä¹‘••Á½Áä¡É•Á¼¤(€€€€€€€…ÁÀ¹ÁÉ½•ÍÍ}É•ÍÁ½¹Í” ‰½™™•ÈµŒÌˆ°€‰APˆ°€‰ÈµŒÌˆ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼°Í¹…ÁÍ¡½Ğ¤((€€€‘•˜Ñ•ÍÑ}¹½Ñ¥™¥…Ñ¥½¹}½ÕÑ‰½á}É•ÍÕµ•}¥Í}¥‘•µÁ½Ñ•¹Ğ¡Í•±˜¤è(€€€€€€€É•Á¼°…°°µÍœ°…ÁÀ€ôÍ•±˜¹ÉÕ¹Ñ¥µ” ¤(€€€€€€€Í•±˜¹•Ñ}Ñ½}ŒÌ¡…ÁÀ¤(€€€€€€€€ŒM¥µÕ±…Ñ”Ù•É¥™¥•‰½½­¥¹œ€¬‘ÕÉ…‰±”½¹™¥Éµ…Ñ¥½¸½ÕÑ‰½à‰•™½É”±½…°™¥¹…±¥é…Ñ¥½¸¸(€€€€€€€½™˜€ôÉ•Á¼¹½™™•ÉÍl‰½™™•ÈµŒÌ‰t(€€€€€€€½™˜¹ÍÑ…ÑÕÌ€ô=™™•ÉMÑ…ÑÕÌ¹AQ(€€€€€€€½™˜¹É•ÍÁ½¹Í•}¥€ô€‰ÈµŒÌˆ(€€€€€€€É•Á¼¹İ½É­™±½Ü¹ÍÑ…Ñ”€ô]½É­™±½İMÑ…Ñ”¹	==-}9=Q%%Q%=9}A9%9(€€€€€€€É•Á¼¹İ½É­™±½Ü¹İ¥¹¹•É}…¹‘¥‘…Ñ•}¥€ô€‰Ìˆ(€€€€€€€É•Á¼¹İ½É­™±½Ü¹‰½½­¥¹}•Ù•¹Ñ}¥€ô€‰•ÙĞµ•á¥ÍÑ¥¹œˆ(€€€€€€€Ñ½­•¸€ô€‰m	µİ˜´ÀÀÄµ=9%I4µÍtˆ(€€€€€€€É•Á¼¹½ÕÑ‰½ámÑ½­•¹t€ô€‰µÍœµ½¹™¥É´ˆ(€€€€€€€…ÁÀ¹ÍÑ…ÉĞ ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹İ½É­™±½Ü¹ÍÑ…Ñ”°]½É­™±½İMÑ…Ñ”¹=5A1Q}I=YI¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹±•‘•È°ì‰İ˜´ÀÀÄˆè€àÔÀÁô¤(€€€€€€€…ÁÀ¹ÍÑ…ÉĞ ¤(€€€€€€€Í•±˜¹…ÍÍ•ÉÑÅÕ…°¡É•Á¼¹±•‘•È°ì‰İ˜´ÀÀÄˆè€àÔÀÁô¤()¥˜}}¹…µ•}|€ôô€‰}}µ…¥¹}|ˆè(€€€Õ¹¥ÑÑ•ÍĞ¹µ…¥¸ ¤(
+
+    def test_response_replay_resumes_decline(self):
+        repo, cal, msg, app = self.runtime()
+        app.start()
+        off = repo.offers["offer-c2"]
+        off.status = OfferStatus.DECLINED
+        off.response_id = "r-c2"
+        repo.workflow.active_offer_id = "offer-c2"
+        app.process_response("offer-c2", "DECLINE", "r-c2")
+        self.assertEqual(repo.workflow.active_offer_id, "offer-c3")
+
+    def test_response_replay_mismatch_fails_closed(self):
+        repo, cal, msg, app = self.runtime()
+        app.start()
+        app.process_response("offer-c2", "DECLINE", "r-c2")
+        with self.assertRaises(RuntimeError):
+            app.process_response("offer-c2", "ACCEPT", "r-c2")
+
+    def test_owner_denial_resumes_next_candidate(self):
+        repo, cal, msg, app = self.runtime()
+        app.start()
+        app.process_response("offer-c2", "ACCEPT", "r-c2", discount=True)
+        self.assertEqual(repo.workflow.state, WorkflowState.NEEDS_OWNER_DECISION)
+        app.apply_owner_decision(approve=False)
+        self.assertEqual(repo.workflow.active_offer_id, "offer-c3")
+        self.assertEqual(cal.create_calls, 0)
+
+    def test_owner_approval_requires_explicit_value_and_is_replay_safe(self):
+        repo, cal, msg, app = self.runtime()
+        app.start()
+        app.process_response("offer-c2", "ACCEPT", "r-c2", discount=True)
+        with self.assertRaises(ValueError):
+            app.apply_owner_decision(approve=True)
+        app.apply_owner_decision(approve=True, approved_value_cents=7000)
+        self.assertEqual(repo.ledger["wf-001"], 7000)
+        self.assertEqual(repo.workflow.recovered_value_cents, 7000)
+        before = copy.deepcopy(repo)
+        app.apply_owner_decision(approve=True, approved_value_cents=7000)
+        self.assertEqual(repo, before)
+
+    def test_terminal_states_absorb_response_replay(self):
+        repo, cal, msg, app = self.runtime()
+        self.get_to_c3(app)
+        app.process_response("offer-c3", "ACCEPT", "r-c3")
+        snapshot = copy.deepcopy(repo)
+        app.process_response("offer-c3", "ACCEPT", "r-c3")
+        app.process_response("offer-c2", "DECLINE", "r-c2")
+        self.assertEqual(repo, snapshot)
+
+    def test_completed_unrecovered_absorbs_replay(self):
+        repo, cal, msg, app = self.runtime()
+        self.get_to_c3(app)
+        cal.open = False
+        app.process_response("offer-c3", "ACCEPT", "r-c3")
+        snapshot = copy.deepcopy(repo)
+        app.process_response("offer-c3", "ACCEPT", "r-c3")
+        self.assertEqual(repo, snapshot)
+
+    def test_notification_outbox_resume_is_idempotent(self):
+        repo, cal, msg, app = self.runtime()
+        self.get_to_c3(app)
+        # Simulate verified booking + durable confirmation outbox before local finalization.
+        off = repo.offers["offer-c3"]
+        off.status = OfferStatus.ACCEPTED
+        off.response_id = "r-c3"
+        repo.workflow.state = WorkflowState.BOOKED_NOTIFICATION_PENDING
+        repo.workflow.winner_candidate_id = "C3"
+        repo.workflow.booking_event_id = "evt-existing"
+        token = "[BF-wf-001-CONFIRM-C3]"
+        repo.outbox[token] = "msg-confirm"
+        app.start()
+        self.assertEqual(repo.workflow.state, WorkflowState.COMPLETED_RECOVERED)
+        self.assertEqual(repo.ledger, {"wf-001": 8500})
+        app.start()
+        self.assertEqual(repo.ledger, {"wf-001": 8500})
+
+
+if __name__ == "__main__":
+    unittest.main()
