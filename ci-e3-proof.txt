@@ -1,2 +1,3 @@
 Backfill E3 clean-runtime CI observation branch.
 This file exists only to trigger and observe pull-request CI; it is not intended for main.
+Probe synchronized after the base workflow gained an explicit success comment.
