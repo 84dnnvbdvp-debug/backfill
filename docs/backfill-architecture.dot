@@ -1,0 +1,45 @@
+digraph BackfillArchitecture {
+  graph [rankdir=LR, bgcolor="white", pad="0.25", nodesep="0.45", ranksep="0.65", fontname="Helvetica"];
+  node [shape=box, style="rounded", fontname="Helvetica", fontsize=11, margin="0.14,0.10"];
+  edge [fontname="Helvetica", fontsize=9];
+
+  owner [label="Business owner / operator
+Policy authority"];
+  clients [label="Waitlist clients
+Offer / reply / confirmation"];
+  strands [label="Strands Agents SDK
+Custom Model + @tool
+BeforeToolCall interrupt/resume"];
+  core [label="Deterministic BackfillApplication
+Eligibility • order • policy • idempotency
+booking verification • terminal state
+recovered-value accounting"];
+  state [label="Durable workflow state / audit
+Offer intent • outbox • ledger"];
+  calendar [label="Calendar adapter
+Deterministic booking key / event ID
+create → readback → verify
+reconcile ambiguous outcomes"];
+  gmail [label="Gmail adapter
+Deterministic X-Backfill-Token
+durable outbox
+reconcile before resend"];
+  boundary [shape=note, label="Evidence boundary
+E2: mocks/fixtures
+E3: clean real Strands runtime
+E4: authorized provider mutation + readback
+No AgentCore/Bedrock deployment claimed"];
+
+  owner -> strands [label="goal / policy decision"];
+  strands -> core [label="bounded tool calls"];
+  core -> state [label="exact durable writes"];
+  core -> calendar [label="booking operations"];
+  core -> gmail [label="offer / confirmation"];
+  gmail -> clients [label="messages"];
+  clients -> core [label="observed response"];
+  calendar -> core [label="provider verification"];
+  core -> owner [label="policy exception only"];
+  boundary -> strands [style=dashed, arrowhead=none];
+  boundary -> calendar [style=dashed, arrowhead=none];
+  boundary -> gmail [style=dashed, arrowhead=none];
+}
