@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Backfill live Google OAuth material — NEVER COMMIT
+credentials.json
+*-credentials.json
+token.json
+*-token.json
+.backfill-live/
