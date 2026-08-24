@@ -34,7 +34,7 @@ python -m pip install -r requirements-ci.txt
 PYTHONPATH=. python -m unittest discover -s tests -v
 ```
 
-The canonical suite contains 26 tests: 16 current application/hardening tests and 10 mocked Google-adapter tests.
+The canonical suite currently contains 30 tests: 16 application/hardening tests, 10 mocked Google-adapter tests, and 4 zero-credential live-bridge parser/slot-gate tests.
 
 ## Zero-credential Strands smoke harness
 
@@ -44,9 +44,36 @@ PYTHONPATH=. python scripts/strands_smoke_harness.py
 
 The smoke harness imports the real installed `strands-agents==1.52.0` SDK but uses local in-memory Calendar/message doubles. It exercises a happy-path recovery and a policy-exception interrupt/resume flow without touching real Google resources or requiring credentials.
 
+## Live Google provider bridge
+
+The live path intentionally keeps OAuth material local and out of Git. It is for explicitly authorized demo resources only.
+
+Install the pinned live dependencies:
+
+```bash
+python -m pip install -r requirements-live.txt
+```
+
+Create a Google OAuth **Desktop app** client in a Google Cloud project with the Gmail and Calendar APIs enabled, download its JSON as `credentials.json`, then authorize the two provider identities separately as needed:
+
+```bash
+PYTHONPATH=. python scripts/google_oauth_bootstrap.py calendar --token calendar-token.json
+PYTHONPATH=. python scripts/google_oauth_bootstrap.py gmail --token gmail-token.json
+```
+
+The requested scopes are deliberately narrower than full mailbox/calendar control:
+- Calendar: `calendar.events.owned`
+- Gmail: `gmail.readonly` + `gmail.send`
+
+`credentials.json`, `*-token.json`, and `.backfill-live/` are ignored by Git and must never be committed.
+
+A one-process live test runner is provided at `scripts/live_e5_google.py`. It lets the real `BackfillApplication` own offer idempotency, Gmail reconciliation, deterministic reply classification, Calendar booking/verification, confirmation, and terminal completion. It fails closed on unexpected reply text and verifies that the Gmail token belongs to the explicitly named sender before sending.
+
+This live runner is a controlled test bridge, not a claim of production deployment or durable crash recovery across a process restart.
+
 ## Real-provider boundary
 
-The repository's Google adapters are designed for authenticated Calendar/Gmail integration, but real provider mutation/readback should be performed only against explicitly authorized dedicated demo resources. Fixture/mock recovered value is not business revenue.
+Real provider mutation/readback must be performed only against explicitly authorized dedicated/controlled demo resources. Fixture/mock recovered value is not business revenue. Private ChatGPT conversation content must never be used as outbound email material unless the user explicitly identifies and authorizes that specific content for external sharing.
 
 ## License
 
