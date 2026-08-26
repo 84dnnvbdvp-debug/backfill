@@ -17,6 +17,16 @@ The application includes explicit reconciliation paths for ambiguous Calendar/Gm
 
 See [`docs/backfill-architecture.svg`](docs/backfill-architecture.svg). The diagram separates Strands orchestration from the deterministic Backfill authority and shows the Calendar/Gmail adapter boundary. No AgentCore or Bedrock deployment is claimed by this repository.
 
+## Verified evidence
+
+Backfill has been verified in a consenting real-provider **test context** end to end: the actual runtime sent one offer, received an exact `ACCEPT`, created and provider-verified the dedicated Google Calendar booking, sent confirmation, and reached `COMPLETED_RECOVERED`.
+
+This is not a claim of production deployment, a real customer/business recovery, or revenue. The recorded recovered appointment value in that test is test workflow value only.
+
+## Judge quick start
+
+See [`docs/judge-testing.md`](docs/judge-testing.md) for the safest verification path. Judges can run the 30-test suite and real Strands smoke harness without any Google credentials or access to entrant accounts.
+
 ## Canonical setup
 
 The canonical proof path uses Python 3.12 and pins Strands exactly for reproducibility.
