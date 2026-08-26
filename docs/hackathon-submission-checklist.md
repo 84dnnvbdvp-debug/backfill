@@ -19,37 +19,64 @@ Official FAQ: https://agentsforhumans.devpost.com/details/faqs
 - [x] MIT license present and recognized by GitHub.
 - [x] README present.
 - [x] Architecture diagram present.
-- [ ] Text description explaining features and functionality. A grounded draft now exists in `docs/hackathon-presentation-plan.md`; finalize only after the demonstrated system state is known.
-- [ ] Public demo video, maximum **5 minutes**, uploaded to YouTube or Vimeo. A ~4:15 storyboard now exists in `docs/hackathon-presentation-plan.md`.
-- [ ] Video demonstrates the working project end to end.
-- [ ] Video pitch states: the problem, who it is for, and why it matters.
+- [x] Text description draft grounded in demonstrated E5 state exists in `docs/hackathon-presentation-plan.md`.
+- [ ] Public demo video, maximum **5 minutes**, uploaded to YouTube or Vimeo.
+- [x] Verified working end-to-end test-context flow exists for video capture: actual runtime offer → real `ACCEPT` → provider booking/verification → confirmation → `COMPLETED_RECOVERED`.
+- [x] Video storyboard covers problem, audience, why it matters, architecture, working demo, implementation proof, and impact.
 - [ ] AWS Builder ID entered in the submission.
-- [ ] Working project access/testing instructions available to judges through the end of judging.
-- [ ] Choose exactly one track for this submission. Current intended track is **Professional Agents**, but final submission selection remains unverified.
+- [x] Judge-safe local testing instructions exist in `docs/judge-testing.md`.
+- [ ] Choose exactly one track in the final Devpost form. Intended track: **Professional Agents**.
+- [ ] Final Devpost submission completed.
 
-## Backfill-specific proof target
+## Backfill proof state
 
-Before recording the final demo, prefer a fresh valid E5 run in which the real `BackfillApplication` owns offer sending, reply interpretation, booking, provider verification, confirmation, and terminal completion. Do not use the invalid duplicate-email attempt as evidence.
+### E3 — clean runtime
 
-The current blocker is the one-time Google Desktop OAuth authorization documented in `docs/desktop-oauth-checklist.md`. No additional live email or booking should be attempted before the actual runtime has those credentials.
+- Public repo: `84dnnvbdvp-debug/backfill`.
+- Clean GitHub Actions has installed the pinned Strands SDK and passed the canonical suite plus Strands smoke harness.
+
+### E4 — authenticated provider reality
+
+- Dedicated Google Calendar and controlled Gmail mutation/readback verified.
+
+### E5 — consenting end-to-end test context
+
+Verified 2026-08-26 under the actual Backfill runtime:
+- one offer sent,
+- real consenting recipient replied exact `ACCEPT`,
+- booking created and provider-verified in `Backfill Demo`,
+- confirmation sent,
+- workflow reached `COMPLETED_RECOVERED`,
+- test recovered value recorded as 8,500 cents.
+
+This is **not** a real business/customer recovery and **not** external revenue. E6 remains unverified.
+
+## Known product-readiness risk
+
+The verified offer landed in Gmail Spam. Treat this as a concrete deliverability risk for a real pilot. Do not rerun E5 merely to accumulate evidence and do not run artificial “warming” campaigns. See the bounded deliverability note in `docs/hackathon-presentation-plan.md`.
 
 ## Submission-quality opportunities
 
-These are optional rather than blockers:
+Optional rather than blockers:
+- live demo link;
+- Amazon Bedrock AgentCore deployment;
+- builder.aws public build posts for eligible bonus points;
+- a small real-business pilot if a consenting low-friction opportunity appears before submission.
 
-- A live demo link can strengthen the Technical Implementation score.
-- Amazon Bedrock AgentCore is encouraged but not required; the rules state it can strengthen Technical Implementation.
-- Public posts on `builder.aws.com` about the build journey can earn bonus judging points, subject to the current official rules.
+Do not delay a coherent submission merely to chase optional extras.
 
 ## Judging lens
 
-Stage Two uses five equally weighted criteria: Technical Implementation, Design, Potential Impact, Creativity & Originality, and Presentation. Backfill should therefore preserve not only technical correctness but a coherent end-to-end product story that visibly solves cancelled-appointment recovery for a real audience.
+Stage Two uses five equally weighted criteria: Technical Implementation, Design, Potential Impact, Creativity & Originality, and Presentation. Backfill should therefore show the working recovery loop clearly, explain why deterministic authority matters, and preserve evidence/claim boundaries.
 
-## Verified repository state on 2026-08-26
+## Current verified repository state
 
-- Public repository: `84dnnvbdvp-debug/backfill`.
-- GitHub recognizes the repository license as MIT.
-- Clean GitHub Actions run has passed the canonical 30-test suite and Strands smoke harness.
-- Dedicated Google Calendar and Gmail provider mutation/readback have reached E4.
-- E5 remains unverified pending the actual runtime OAuth checkpoint.
-- Hackathon presentation/description planning is now captured in `docs/hackathon-presentation-plan.md` without promoting any unverified live outcome.
+- Public repository and MIT license verified.
+- Current main is green in GitHub Actions.
+- Canonical suite: 30 tests.
+- Strands smoke harness passes.
+- E5 test-context completion verified with independent Calendar/Gmail readback.
+- Architecture diagram ready.
+- Description/storyboard ready.
+- Judge testing instructions ready.
+- Remaining required human work: record/upload <=5-minute video, enter AWS Builder ID, select Professional Agents, submit Devpost.
