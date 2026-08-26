@@ -19,10 +19,12 @@ Official FAQ: https://agentsforhumans.devpost.com/details/faqs
 - [x] MIT license present and recognized by GitHub.
 - [x] README present.
 - [x] Architecture diagram present.
-- [x] Text description draft grounded in demonstrated E5 state exists in `docs/hackathon-presentation-plan.md`.
+- [x] Paste-ready text description and submission copy exists in `docs/final-devpost-copy.md`.
+- [x] Required pre-existing-work disclosure is explicitly included in `docs/final-devpost-copy.md`.
 - [ ] Public demo video, maximum **5 minutes**, uploaded to YouTube or Vimeo.
 - [x] Verified working end-to-end test-context flow exists for video capture: actual runtime offer → real `ACCEPT` → provider booking/verification → confirmation → `COMPLETED_RECOVERED`.
-- [x] Video storyboard covers problem, audience, why it matters, architecture, working demo, implementation proof, and impact.
+- [x] Video storyboard and privacy-safe capture checklist exist in `docs/hackathon-presentation-plan.md` and `docs/demo-recording-checklist.md`.
+- [x] Timed ~4:15 narration exists in `docs/demo-voiceover-script.md`.
 - [ ] AWS Builder ID entered in the submission.
 - [x] Judge-safe local testing instructions exist in `docs/judge-testing.md`.
 - [ ] Choose exactly one track in the final Devpost form. Intended track: **Professional Agents**.
@@ -77,6 +79,10 @@ Stage Two uses five equally weighted criteria: Technical Implementation, Design,
 - Strands smoke harness passes.
 - E5 test-context completion verified with independent Calendar/Gmail readback.
 - Architecture diagram ready.
-- Description/storyboard ready.
+- Paste-ready Devpost copy ready.
+- Pre-existing-work disclosure ready.
+- Demo recording checklist ready.
+- Timed demo narration ready.
 - Judge testing instructions ready.
+- Clean phone-readable final submission copy also exists in Drive as `Backfill — Final Devpost Copy v1.0`.
 - Remaining required human work: record/upload <=5-minute video, enter AWS Builder ID, select Professional Agents, submit Devpost.
