@@ -1,8 +1,8 @@
 """Deterministic preflight for the public Backfill hackathon bundle.
 
 The tool can verify repository-internal evidence and report human/external
-actions. It does not query Devpost and never treats a green repository as a
-submission receipt.
+actions. It does not query Devpost and never treats a green repository or a
+self-authored receipt record as proof that Devpost accepted a submission.
 """
 
 from __future__ import annotations
@@ -11,9 +11,10 @@ import argparse
 import hashlib
 import json
 import sys
-from dataclasses import asdict, dataclass
-from pathlib import Path
 from collections.abc import Mapping
+from dataclasses import asdict, dataclass
+from datetime import date
+from pathlib import Path
 from typing import Any
 
 
@@ -64,9 +65,12 @@ class ExternalAction:
 class PreflightReport:
     rule_snapshot_url: str
     rule_snapshot_verified_on: str
+    rule_snapshot_current: bool
     repository_bundle_ready: bool
     external_actions_complete: bool
     submission_receipt_recorded: bool
+    submission_receipt_verified: bool
+    submission_packet_complete: bool
     preflight_complete: bool
     repository_errors: tuple[str, ...]
     external_actions: tuple[ExternalAction, ...]
@@ -122,7 +126,9 @@ def _parse_manifest(path: Path) -> tuple[dict[str, str], list[str]]:
             continue
         digest, relative = parts
         relative = relative.lstrip("*")
-        if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
+        if len(digest) != 64 or any(
+            char not in "0123456789abcdef" for char in digest
+        ):
             errors.append(f"checksum_manifest_bad_digest:{line_number}")
             continue
         if relative in entries:
@@ -187,7 +193,11 @@ def _repository_errors(root: Path) -> list[str]:
     return errors
 
 
-def _load_external_actions(root: Path) -> tuple[ExternalAction, ...]:
+def _load_external_actions(
+    root: Path,
+    *,
+    as_of: date,
+) -> tuple[tuple[ExternalAction, ...], bool]:
     status_path = root / "docs" / "submission-status.json"
     status = _load_json(status_path, label="submission_status")
 
@@ -199,8 +209,21 @@ def _load_external_actions(root: Path) -> tuple[ExternalAction, ...]:
         raise PreflightDataError("submission_status_rule_snapshot_missing")
     if snapshot.get("url") != RULE_SNAPSHOT_URL:
         raise PreflightDataError("submission_status_rule_url_mismatch")
-    if snapshot.get("verified_on") != RULE_SNAPSHOT_VERIFIED_ON:
+
+    verified_on_raw = snapshot.get("verified_on")
+    if verified_on_raw != RULE_SNAPSHOT_VERIFIED_ON:
         raise PreflightDataError("submission_status_rule_date_mismatch")
+    try:
+        verified_on = date.fromisoformat(str(verified_on_raw))
+    except ValueError as exc:
+        raise PreflightDataError("submission_status_rule_date_invalid") from exc
+
+    rule_snapshot_current = verified_on == as_of
+    if not rule_snapshot_current:
+        raise PreflightDataError(
+            "submission_status_rule_snapshot_stale:"
+            f"verified_on={verified_on.isoformat()}:as_of={as_of.isoformat()}"
+        )
 
     actions = status.get("external_actions")
     if not isinstance(actions, Mapping):
@@ -235,12 +258,14 @@ def _load_external_actions(root: Path) -> tuple[ExternalAction, ...]:
                 f"submission_status_complete_without_evidence:{key}"
             )
         parsed.append(ExternalAction(key=key, state=state, evidence=evidence))
-    return tuple(parsed)
+    return tuple(parsed), rule_snapshot_current
 
 
-def _receipt_record(path: Path | None) -> tuple[bool, tuple[str, ...]]:
+def _receipt_record(
+    path: Path | None,
+) -> tuple[bool, bool, tuple[str, ...]]:
     if path is None:
-        return False, (
+        return False, False, (
             "No Devpost receipt record was supplied. Repository readiness is "
             "not proof of submission.",
         )
@@ -258,9 +283,10 @@ def _receipt_record(path: Path | None) -> tuple[bool, tuple[str, ...]]:
     if receipt["provider"].strip().lower() != "devpost":
         raise PreflightDataError("submission_receipt_provider_not_devpost")
 
-    return True, (
-        "Receipt structure is present, but this local tool does not query "
-        "Devpost or independently authenticate the supplied evidence.",
+    return True, False, (
+        "A Devpost receipt record is present, but this local tool does not query "
+        "or authenticate Devpost. The record can complete the local evidence "
+        "packet; it cannot by itself verify that Devpost accepted the submission.",
     )
 
 
@@ -268,12 +294,18 @@ def run_preflight(
     root: Path,
     *,
     receipt_path: Path | None = None,
+    as_of: date | None = None,
 ) -> PreflightReport:
     root = root.resolve()
+    effective_date = as_of or date.today()
     repository_errors = _repository_errors(root)
 
+    rule_snapshot_current = False
     try:
-        external_actions = _load_external_actions(root)
+        external_actions, rule_snapshot_current = _load_external_actions(
+            root,
+            as_of=effective_date,
+        )
     except PreflightDataError as exc:
         repository_errors.append(str(exc))
         external_actions = tuple(
@@ -283,10 +315,15 @@ def run_preflight(
 
     receipt_errors: tuple[str, ...] = ()
     try:
-        receipt_recorded, receipt_warnings = _receipt_record(receipt_path)
+        (
+            receipt_recorded,
+            receipt_verified,
+            receipt_warnings,
+        ) = _receipt_record(receipt_path)
     except PreflightDataError as exc:
         receipt_errors = (str(exc),)
         receipt_recorded = False
+        receipt_verified = False
         receipt_warnings = (
             "The supplied receipt record was rejected; submission remains "
             "unverified by this preflight.",
@@ -296,24 +333,41 @@ def run_preflight(
     external_actions_complete = all(
         action.state == "COMPLETE" for action in external_actions
     )
-    preflight_complete = (
+    submission_packet_complete = (
         repository_bundle_ready
         and external_actions_complete
         and receipt_recorded
+    )
+    preflight_complete = (
+        repository_bundle_ready
+        and external_actions_complete
+        and receipt_verified
     )
 
     return PreflightReport(
         rule_snapshot_url=RULE_SNAPSHOT_URL,
         rule_snapshot_verified_on=RULE_SNAPSHOT_VERIFIED_ON,
+        rule_snapshot_current=rule_snapshot_current,
         repository_bundle_ready=repository_bundle_ready,
         external_actions_complete=external_actions_complete,
         submission_receipt_recorded=receipt_recorded,
+        submission_receipt_verified=receipt_verified,
+        submission_packet_complete=submission_packet_complete,
         preflight_complete=preflight_complete,
         repository_errors=tuple(repository_errors),
         external_actions=external_actions,
         receipt_errors=receipt_errors,
         receipt_warnings=receipt_warnings,
     )
+
+
+def _iso_date(value: str) -> date:
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            f"expected YYYY-MM-DD date, got {value!r}"
+        ) from exc
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -329,27 +383,45 @@ def _build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="optional Devpost receipt JSON; kept separate from repository readiness",
     )
+    parser.add_argument(
+        "--as-of",
+        type=_iso_date,
+        help=(
+            "date used to require a same-day official-rule verification "
+            "(defaults to the local current date)"
+        ),
+    )
     parser.add_argument("--json", action="store_true", dest="as_json")
     parser.add_argument(
         "--require-submitted",
         action="store_true",
-        help="return 2 unless repository, external actions, and receipt are present",
+        help=(
+            "return 2 unless the submission is independently verified; a "
+            "self-authored receipt record cannot satisfy this boundary"
+        ),
     )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
-    report = run_preflight(args.root, receipt_path=args.receipt)
+    report = run_preflight(
+        args.root,
+        receipt_path=args.receipt,
+        as_of=args.as_of,
+    )
 
     if args.as_json:
         print(json.dumps(report.as_dict(), indent=2, sort_keys=True))
     else:
         print(
             "BACKFILL_SUBMISSION_PREFLIGHT "
+            f"rule_snapshot_current={str(report.rule_snapshot_current).lower()} "
             f"repository_bundle_ready={str(report.repository_bundle_ready).lower()} "
             f"external_actions_complete={str(report.external_actions_complete).lower()} "
             f"submission_receipt_recorded={str(report.submission_receipt_recorded).lower()} "
+            f"submission_receipt_verified={str(report.submission_receipt_verified).lower()} "
+            f"submission_packet_complete={str(report.submission_packet_complete).lower()} "
             f"preflight_complete={str(report.preflight_complete).lower()}"
         )
         for error in report.repository_errors:
