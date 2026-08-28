@@ -43,7 +43,7 @@ def _rewrite_manifest_digest(root: Path, relative: str) -> None:
 class SubmissionPreflightTests(unittest.TestCase):
     def test_current_repository_bundle_is_ready_but_submission_is_not_claimed(self):
         report = run_preflight(ROOT)
-        self.assertTrue(report.repository_bundle_ready)
+        self.assertTrue(report.repository_bundle_ready, report.repository_errors)
         self.assertFalse(report.external_actions_complete)
         self.assertFalse(report.submission_receipt_recorded)
         self.assertFalse(report.preflight_complete)
@@ -124,7 +124,7 @@ class SubmissionPreflightTests(unittest.TestCase):
 
         report = run_preflight(root)
 
-        self.assertTrue(report.repository_bundle_ready)
+        self.assertTrue(report.repository_bundle_ready, report.repository_errors)
         self.assertTrue(report.external_actions_complete)
         self.assertFalse(report.submission_receipt_recorded)
         self.assertFalse(report.preflight_complete)
@@ -161,7 +161,10 @@ class SubmissionPreflightTests(unittest.TestCase):
 
         report = run_preflight(root, receipt_path=receipt_path)
 
-        self.assertTrue(report.preflight_complete)
+        self.assertTrue(
+            report.preflight_complete,
+            (report.repository_errors, report.receipt_errors),
+        )
         self.assertTrue(report.submission_receipt_recorded)
         self.assertTrue(
             any(
@@ -189,7 +192,7 @@ class SubmissionPreflightTests(unittest.TestCase):
 
         report = run_preflight(root, receipt_path=receipt_path)
 
-        self.assertTrue(report.repository_bundle_ready)
+        self.assertTrue(report.repository_bundle_ready, report.repository_errors)
         self.assertFalse(report.submission_receipt_recorded)
         self.assertIn(
             "submission_receipt_missing:submission_id",
