@@ -1,0 +1,46 @@
+name: Backfill demo render prep
+
+on:
+  push:
+    branches:
+      - vire/backfill-demo-render-prep-20260907
+    paths:
+      - 'demo-video/**'
+      - '.github/workflows/demo-render-prep.yml'
+  workflow_dispatch:
+
+jobs:
+  render-demo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo-video
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck and bundle
+        run: npm run verify
+
+      - name: Render MP4
+        run: npm run render
+
+      - name: Verify rendered artifact
+        run: |
+          test -s out/backfill-demo.mp4
+          ls -lh out/backfill-demo.mp4
+
+      - name: Upload rendered demo
+        uses: actions/upload-artifact@v4
+        with:
+          name: backfill-demo-render-prep
+          path: demo-video/out/backfill-demo.mp4
+          if-no-files-found: error
