@@ -1,6 +1,6 @@
 # Agents for Humans Hackathon — Submission Checklist
 
-Last verified against the official Devpost rules/FAQ: 2026-08-26.
+Last verified against the official Devpost overview/rules/FAQ: 2026-09-07.
 
 Official rules: https://agentsforhumans.devpost.com/rules
 Official FAQ: https://agentsforhumans.devpost.com/details/faqs
@@ -8,7 +8,7 @@ Official FAQ: https://agentsforhumans.devpost.com/details/faqs
 ## Time-critical
 
 - [x] Request up to **$50 in AWS Promotional Credits** by **September 11, 2026 at 12:00 PM PT**, while supplies last. Submitted 2026-08-25; approval/credit remains pending and must not be counted as spendable until verified.
-- [ ] Submit the final hackathon entry by **September 14, 2026 at 5:00 PM PT**.
+- [ ] Submit the final hackathon entry by **September 14, 2026 at 5:00 PM PDT**.
 - [ ] Keep any awarded promotional credits within their terms; the official rules state these credits expire **October 31, 2026**.
 
 ## Required submission pieces
@@ -22,9 +22,12 @@ Official FAQ: https://agentsforhumans.devpost.com/details/faqs
 - [x] Paste-ready text description and submission copy exists in `docs/final-devpost-copy.md`.
 - [x] Required pre-existing-work disclosure is explicitly included in `docs/final-devpost-copy.md`.
 - [ ] Public demo video, maximum **5 minutes**, uploaded to YouTube or Vimeo.
-- [x] Verified working end-to-end test-context flow exists for video capture: actual runtime offer → real `ACCEPT` → provider booking/verification → confirmation → `COMPLETED_RECOVERED`.
-- [x] Video storyboard and privacy-safe capture checklist exist in `docs/hackathon-presentation-plan.md` and `docs/demo-recording-checklist.md`.
-- [x] Timed ~4:15 narration exists in `docs/demo-voiceover-script.md`.
+- [x] Verified working end-to-end test-context flow exists: actual runtime offer → real `ACCEPT` → provider booking/verification → confirmation → `COMPLETED_RECOVERED`.
+- [x] Preserved controlled Gmail/Calendar evidence from the verified E5 run remains available for an honest evidence replay; a fresh E5 mutation is not required merely to manufacture footage.
+- [x] Machine-owned caption-first Remotion source is staged under `demo-video/` on `vire/backfill-demo-video-h2`; it must still pass package/build verification before promotion.
+- [x] Video storyboard, privacy guardrails, and timed ~4:15 narration spine exist in `docs/hackathon-presentation-plan.md`, `docs/demo-recording-checklist.md`, and `docs/demo-voiceover-script.md`.
+- [ ] Produce the final <=5-minute rendered video and perform a public-safety/evidence-boundary review.
+- [ ] Upload the reviewed video publicly to YouTube or Vimeo.
 - [ ] AWS Builder ID entered in the submission.
 - [x] Judge-safe local testing instructions exist in `docs/judge-testing.md`.
 - [ ] Choose exactly one track in the final Devpost form. Intended track: **Professional Agents**.
@@ -52,6 +55,8 @@ Verified 2026-08-26 under the actual Backfill runtime:
 - test recovered value recorded as 8,500 cents.
 
 This is **not** a real business/customer recovery and **not** external revenue. E6 remains unverified.
+
+For the submission video, the verified provider-run scene may be reconstructed from these preserved controlled records as long as it is explicitly labeled as an evidence replay/reconstruction. Do not present a synthetic terminal frame as original footage unless original terminal capture is independently recovered.
 
 ## Known product-readiness risk
 
@@ -85,4 +90,5 @@ Stage Two uses five equally weighted criteria: Technical Implementation, Design,
 - Timed demo narration ready.
 - Judge testing instructions ready.
 - Clean phone-readable final submission copy also exists in Drive as `Backfill — Final Devpost Copy v1.0`.
-- Remaining required human work: record/upload <=5-minute video, enter AWS Builder ID, select Professional Agents, submit Devpost.
+- Caption-first Remotion source is staged non-authoritatively on `vire/backfill-demo-video-h2`; build/render proof is still required before it can be treated as submission-ready.
+- Remaining unavoidable account-side work is expected to include public video upload, AWS Builder ID, Professional Agents track selection, and final Devpost submission unless a connected authorized submission path is independently proven.
