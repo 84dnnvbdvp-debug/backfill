@@ -1,0 +1,32 @@
+name: Backfill demo video
+
+on:
+  push:
+    branches:
+      - vire/backfill-demo-video-h2
+    paths:
+      - 'demo-video/**'
+      - 'docs/hackathon-submission-checklist.md'
+      - '.github/workflows/demo-video.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-demo-source:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo-video
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck and bundle
+        run: npm run verify
