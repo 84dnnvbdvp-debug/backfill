@@ -1,0 +1,22 @@
+{
+  "name": "backfill-demo-video",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "build": "remotion bundle src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run typecheck && npm run build",
+    "render": "remotion render src/index.ts BackfillDemo out/backfill-demo.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.514",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.514"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "typescript": "5.9.3"
+  }
+}
